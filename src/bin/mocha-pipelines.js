@@ -8,9 +8,10 @@ const async = require('async')
 const debug = require('debug')('mocha-pipelines')
 const program = require('commander')
 const prettyHrtime = require('pretty-hrtime')
+const once = require('once')
 const utils = require('../lib/utils')
 
-const MOCHA_PATH = path.join(__dirname, '..', 'node_modules/.bin/mocha')
+const MOCHA_PATH = 'mocha'
 
 const spawnProcess = (pipelineFiles, cpus, cpu, done) => {
   // split pipelineFiles into processes (to be run in parallel on same machine)
@@ -31,22 +32,16 @@ const spawnProcess = (pipelineFiles, cpus, cpu, done) => {
   }
   let startAt = process.hrtime()
   let mocha = spawn(MOCHA_PATH, processFiles, spawnOpts)
+  done = once(done)
   mocha.on('close', (code) => {
     let runTime = prettyHrtime(process.hrtime(startAt))
     console.error(`Process ${cpu} completed in ${runTime} with code ${code}`)
     done(null, code)
   })
-  mocha.on('error', (err) => {
-    console.error('Mocha error...')
-    console.error(err)
-  })
+  mocha.on('error', done)
 }
 
-const run = (pipelines, pipeline, done) => {
-  // lookup the test files for the given path
-  let testPath = path.join(__dirname, '..', 'test')
-  debug(`testPath: ${testPath}`)
-
+const run = (testPath, pipelines, pipeline, done) => {
   let suiteFiles = utils.lookupFiles(testPath)
   debug(`suiteFiles: ${suiteFiles}`)
 
@@ -57,27 +52,26 @@ const run = (pipelines, pipeline, done) => {
   console.error(`Running pipeline ${pipeline} of ${pipelines} with ${pipelineFiles.length} test files...`)
 
   // parallelize files for this pipeline across available CPUs
-  // pass array of exit codes back to callback
+  // pass array of exit codes back to `done`
   let cpus = os.cpus().length
   async.times(cpus, (i, next) => {
     let cpu = i + 1
-    spawnProcess(pipelineFiles, cpus, cpu, (err, code) => {
-      if (err !== null || code !== 0) {
-        console.error('spawn complete')
-        console.error(`err: ${err}`)
-        console.error(`code: ${code}`)
-      }
-    })
+    spawnProcess(pipelineFiles, cpus, cpu, next)
   }, done)
 }
 
 (function() {
   program
-  .arguments('<pipelines> <pipeline>')
-  .action((pipelines, pipeline) => {
-    debug(`Running action, pipelines: ${pipelines}, ${pipeline}`)
+  .arguments('<pipelines> <pipeline> [testPath]')
+  .action((pipelines, pipeline, testPath) => {
+    debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, testPath: ${testPath}`)
 
-    run(pipelines, pipeline, (err, codes) => {
+    // default testPath to `test/` dir of current directory
+    if (!testPath) {
+      testPath = 'test/'
+    }
+
+    run(testPath, pipelines, pipeline, (err, codes) => {
       debug(`Mocha processes closed, err: ${err}, codes: ${codes}`)
       if (err) {
         console.error(`Unexpected error running mocha-pipelines: ${err.toString()}`)
