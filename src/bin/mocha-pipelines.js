@@ -41,7 +41,7 @@ const spawnProcess = (pipelineFiles, cpus, cpu, done) => {
   mocha.on('error', done)
 }
 
-const run = (testPath, pipelines, pipeline, done) => {
+const runPipeline = (testPath, pipelines, pipeline, done) => {
   let suiteFiles = utils.lookupFiles(testPath)
   debug(`suiteFiles: ${suiteFiles}`)
 
@@ -71,8 +71,8 @@ const run = (testPath, pipelines, pipeline, done) => {
         testPath = 'test/'
       }
 
-      run(testPath, pipelines, pipeline, (err, codes) => {
-        debug(`Mocha processes closed, err: ${err}, codes: ${codes}`)
+      runPipeline(testPath, pipelines, pipeline, (err, exitCodes) => {
+        debug(`Mocha processes closed, err: ${err}, exitCodes: ${exitCodes}`)
         if (err) {
           console.error(`Unexpected error running mocha-pipelines: ${err.toString()}`)
           return process.exit(1)
@@ -80,7 +80,7 @@ const run = (testPath, pipelines, pipeline, done) => {
 
         // mocha usually exits with an exit code equal to number of failed tests.
         // so let's exit with the sum of those across all processes.
-        let exitCode = codes.reduce((a, b) => a + b)
+        let exitCode = exitCodes.reduce((a, b) => a + b)
         process.exit(exitCode)
       })
     })
