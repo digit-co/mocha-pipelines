@@ -60,29 +60,29 @@ const run = (testPath, pipelines, pipeline, done) => {
   }, done)
 }
 
-(function() {
+(function () {
   program
-  .arguments('<pipelines> <pipeline> [testPath]')
-  .action((pipelines, pipeline, testPath) => {
-    debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, testPath: ${testPath}`)
+    .arguments('<pipelines> <pipeline> [testPath]')
+    .action((pipelines, pipeline, testPath) => {
+      debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, testPath: ${testPath}`)
 
-    // default testPath to `test/` dir of current directory
-    if (!testPath) {
-      testPath = 'test/'
-    }
-
-    run(testPath, pipelines, pipeline, (err, codes) => {
-      debug(`Mocha processes closed, err: ${err}, codes: ${codes}`)
-      if (err) {
-        console.error(`Unexpected error running mocha-pipelines: ${err.toString()}`)
-        return process.exit(1)
+      // default testPath to `test/` dir of current directory
+      if (!testPath) {
+        testPath = 'test/'
       }
 
-      // mocha usually exits with an exit code equal to number of failed tests.
-      // so let's exit with the sum of those across all processes.
-      let exitCode = codes.reduce((a, b) => a + b)
-      process.exit(exitCode)
+      run(testPath, pipelines, pipeline, (err, codes) => {
+        debug(`Mocha processes closed, err: ${err}, codes: ${codes}`)
+        if (err) {
+          console.error(`Unexpected error running mocha-pipelines: ${err.toString()}`)
+          return process.exit(1)
+        }
+
+        // mocha usually exits with an exit code equal to number of failed tests.
+        // so let's exit with the sum of those across all processes.
+        let exitCode = codes.reduce((a, b) => a + b)
+        process.exit(exitCode)
+      })
     })
-  })
-  .parse(process.argv)
+    .parse(process.argv)
 })()

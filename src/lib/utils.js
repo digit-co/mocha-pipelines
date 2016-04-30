@@ -5,7 +5,7 @@ const {utils} = require('mocha')
 const debug = require('debug')('mocha-pipelines:utils')
 
 exports.lookupFiles = (testPath) => {
-  let extensions = ["js"]
+  let extensions = ['js']
   let recursive = true
   let files = utils.lookupFiles(testPath, extensions, recursive)
 
