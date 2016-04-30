@@ -2,7 +2,6 @@
 'use strict'
 
 const os = require('os')
-const path = require('path')
 const {spawn} = require('child_process')
 const async = require('async')
 const debug = require('debug')('mocha-pipelines')
@@ -41,8 +40,11 @@ const spawnProcess = (pipelineFiles, cpus, cpu, done) => {
   mocha.on('error', done)
 }
 
-const runPipeline = (testPath, pipelines, pipeline, done) => {
-  let suiteFiles = utils.lookupFiles(testPath)
+const runPipeline = (testFiles, pipelines, pipeline, done) => {
+  let suiteFiles = []
+  for (let file of testFiles) {
+    suiteFiles = suiteFiles.concat(utils.lookupFiles(file))
+  }
   debug(`suiteFiles: ${suiteFiles}`)
 
   // split files into pipelines (to be run in parallel on separate machines)
@@ -62,16 +64,16 @@ const runPipeline = (testPath, pipelines, pipeline, done) => {
 
 (function () {
   program
-    .arguments('<pipelines> <pipeline> [testPath]')
-    .action((pipelines, pipeline, testPath) => {
-      debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, testPath: ${testPath}`)
+    .arguments('<pipelines> <pipeline> [files...]')
+    .action((pipelines, pipeline, files) => {
+      debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, files: ${files}`)
 
-      // default testPath to `test/` dir of current directory
-      if (!testPath) {
-        testPath = 'test/'
+      // default test files to `test/` dir
+      if (!files.length) {
+        files = ['test/']
       }
 
-      runPipeline(testPath, pipelines, pipeline, (err, exitCodes) => {
+      runPipeline(files, pipelines, pipeline, (err, exitCodes) => {
         debug(`Mocha processes closed, err: ${err}, exitCodes: ${exitCodes}`)
         if (err) {
           console.error(`Unexpected error running mocha-pipelines: ${err.toString()}`)

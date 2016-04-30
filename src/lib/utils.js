@@ -1,19 +1,17 @@
 'use strict'
 
-const Path = require('path')
 const {utils} = require('mocha')
-const debug = require('debug')('mocha-pipelines:utils')
 
 exports.lookupFiles = (testPath) => {
   let extensions = ['js']
   let recursive = true
   let files = utils.lookupFiles(testPath, extensions, recursive)
+  if (!Array.isArray(files)) {
+    files = [files]
+  }
 
   // sort files so they are always in defined order across pipelines
   files.sort()
-
-  // resolve to absolute paths
-  files = files.map(path => Path.resolve(path))
 
   return files
 }
