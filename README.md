@@ -1,9 +1,10 @@
 # mocha-pipelines
 
-(mocha logo here with pipelines running through it)
+*(mocha logo here with pipelines running through it)*
 
 Parallelize your [mocha](https://github.com/mochajs/mocha) tests across
-multiple virtual machines (pipelines) to decrease the runtime of your tests.
+multiple virtual machines (pipelines) and/or processes to decrease the runtime
+of your tests.
 
 ## How to parallelize
 `mocha-pipelines` only requires 2 arguments to get started - the total number
