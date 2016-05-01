@@ -1,6 +1,6 @@
 {
   "name": "mocha-pipelines",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Parallelize your mocha tests across multiple virtual machines (pipelines)",
   "bin": {
     "mocha-pipelines": "./build/bin/mocha-pipelines.js"
