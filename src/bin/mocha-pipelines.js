@@ -4,8 +4,10 @@
 const debug = require('debug')('mocha-pipelines')
 const program = require('commander')
 const runPipeline = require('../lib/runPipeline')
+const pkg = require('../../package.json')
 
 program
+  .version(pkg.version)
   .arguments('<pipelines> <pipeline> [files...]')
   .action((pipelines, pipeline, files) => {
     debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, files: ${files}`)
