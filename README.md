@@ -1,4 +1,12 @@
 # mocha-pipelines
+[![travis][travis-image]][travis-url]
+[![npm][npm-image]][npm-url]
+
+[travis-image]: https://travis-ci.org/hellodigit/mocha-pipelines.svg?branch=master
+[travis-url]: https://travis-ci.org/hellodigit/mocha-pipelines
+
+[npm-image]: https://img.shields.io/npm/v/mocha-pipelines.svg?style=flat
+[npm-url]: https://npmjs.org/package/mocha-pipelines
 
 *(mocha logo here with pipelines running through it)*
 
