@@ -31,3 +31,8 @@ program
     })
   })
   .parse(process.argv)
+
+// output help if no arguments are given
+if (!process.argv.slice(2).length) {
+  program.outputHelp()
+}
