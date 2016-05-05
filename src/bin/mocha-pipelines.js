@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
+const os = require('os')
 const debug = require('debug')('mocha-pipelines')
 const program = require('commander')
 const runPipeline = require('../lib/runPipeline')
@@ -8,16 +9,18 @@ const pkg = require('../../package.json')
 
 program
   .version(pkg.version)
+  .option('-p, --processes [n]', 'specify number of processes to use', os.cpus().length)
   .arguments('<pipelines> <pipeline> [files...]')
   .action((pipelines, pipeline, files) => {
-    debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, files: ${files}`)
+    let cpus = program.processes
+    debug(`Running action, pipelines: ${pipelines}, pipeline: ${pipeline}, files: ${files}, cpus: ${cpus}`)
 
     // default test files to `test/` dir
     if (!files.length) {
       files = ['test/']
     }
 
-    runPipeline(files, pipelines, pipeline, (err, exitCodes) => {
+    runPipeline(files, pipelines, pipeline, cpus, (err, exitCodes) => {
       debug(`Mocha processes closed, err: ${err}, exitCodes: ${exitCodes}`)
       if (err) {
         console.error(`Unexpected error running mocha-pipelines: ${err.toString()}`)

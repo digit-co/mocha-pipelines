@@ -1,13 +1,12 @@
 'use strict'
 
-const os = require('os')
 const async = require('async')
 const debug = require('debug')('mocha-pipelines:runPipeline')
 const { splitFiles, lookupFiles } = require('./utils')
 const runProcess = require('./runProcess')
 const localMocha = require('./localMocha')
 
-module.exports = (testFiles, pipelines, pipeline, done) => {
+module.exports = (testFiles, pipelines, pipeline, cpus, done) => {
   let suiteFiles = []
   for (let file of testFiles) {
     suiteFiles = suiteFiles.concat(lookupFiles(file))
@@ -28,9 +27,8 @@ module.exports = (testFiles, pipelines, pipeline, done) => {
   // find locally installed mocha based on path of first test file
   let mochaPath = localMocha(pipelineFiles[0])
 
-  // parallelize files for this pipeline across available CPUs
+  // parallelize files for this pipeline across separate processes
   // pass array of exit codes back to `done`
-  let cpus = os.cpus().length
   async.times(cpus, (i, next) => {
     let cpu = i + 1
     runProcess(mochaPath, pipelineFiles, cpus, cpu, next)
