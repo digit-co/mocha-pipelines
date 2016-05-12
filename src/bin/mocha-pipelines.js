@@ -20,7 +20,21 @@ program
     pipeline = parseInt(pipelineArg)
     files = filesArg
   })
-  .parse(process.argv)
+
+// additional help output after commander's default usage output
+program.on('--help', () => {
+  console.log('  Example:')
+  console.log('')
+  console.log('    Run 3 pipelines of integration tests')
+  console.log('    (run these simultaneously on separate machines)')
+  console.log('')
+  console.log('    mocha-pipelines 3 1 test/integration/**/*.js')
+  console.log('    mocha-pipelines 3 2 test/integration/**/*.js')
+  console.log('    mocha-pipelines 3 3 test/integration/**/*.js')
+  console.log('')
+})
+
+program.parse(process.argv)
 
 let cpus = program.processes
 

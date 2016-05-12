@@ -19,21 +19,62 @@ of your tests.
 $ npm install mocha-pipelines --save-dev
 ```
 
-## How to parallelize
+## Goal
+The goal of this module is to provide an easy solution for a project where
+running all the mocha tests has become painfully slow.
+
+This project assumes that each test file takes about the same amount of time to
+run and evenly distributes the test files across separate machines and processes.
+If this is not the case for you, then you may want to split your tests into
+smaller test files or run your tests separately in multiple "suites".
+
+For example, you could run 2 pipelines of your unit tests and 5 pipelines of
+your integration tests across 7 different machines, all simultaneously:
+```
+mocha-pipelines 2 1 test/unit/**/*.js
+mocha-pipelines 2 2 test/unit/**/*.js
+
+mocha-pipelines 5 1 test/integration/**/*.js
+mocha-pipelines 5 2 test/integration/**/*.js
+mocha-pipelines 5 3 test/integration/**/*.js
+mocha-pipelines 5 4 test/integration/**/*.js
+mocha-pipelines 5 5 test/integration/**/*.js
+```
+
+## Usage
+```
+Usage: mocha-pipelines [options] <pipelines> <pipeline> [files...]
+
+  Options:
+
+    -h, --help           output usage information
+    -V, --version        output the version number
+    -p, --processes [n]  specify number of processes to use
+
+  Example:
+
+    Run 3 pipelines of integration tests
+    (run these simultaneously on separate machines)
+
+    mocha-pipelines 3 1 test/integration/**/*.js
+    mocha-pipelines 3 2 test/integration/**/*.js
+    mocha-pipelines 3 3 test/integration/**/*.js
+```
+
 `mocha-pipelines` only requires 2 arguments to get started - the total number
 of pipelines you are parallelizing tests across, and the pipeline number of the
-virtual machine that is running the tests.
+machine where the command is being executed.
 
 ```
-$ mocha-pipelines <pipelines> <pipeline>
+mocha-pipelines <pipelines> <pipeline>
 ```
 
-For example, to parallelize your tests across across 3 pipelines (VMs), you
-would run the following commands on 3 separate VMs, simultaneously:
+For example, to parallelize your tests across across 3 pipelines, you
+would run the following commands on 3 separate machines, simultaneously:
 
-* Pipeline 1 (VM 1): `$ mocha-pipelines 3 1`
-* Pipeline 2 (VM 2): `$ mocha-pipelines 3 2`
-* Pipeline 3 (VM 3): `$ mocha-pipelines 3 3`
+* machine 1: `mocha-pipelines 3 1`
+* machine 2: `mocha-pipelines 3 2`
+* machine 3: `mocha-pipelines 3 3`
 
 ## Using with mocha options
 If you're currently running mocha with options specified on the command line,
