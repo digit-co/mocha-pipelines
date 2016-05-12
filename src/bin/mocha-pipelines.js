@@ -13,11 +13,11 @@ let files     // test files to distribute across pipelines
 
 program
   .version(pkg.version)
-  .option('-p, --processes [n]', 'specify number of processes to use', os.cpus().length)
+  .option('-p, --processes [n]', 'specify number of processes to use', parseInt, os.cpus().length)
   .arguments('<pipelines> <pipeline> [files...]')
   .action((pipelinesArg, pipelineArg, filesArg) => {
-    pipelines = pipelinesArg
-    pipeline = pipelineArg
+    pipelines = parseInt(pipelinesArg)
+    pipeline = parseInt(pipelineArg)
     files = filesArg
   })
   .parse(process.argv)
