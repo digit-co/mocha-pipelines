@@ -8,8 +8,6 @@
 [npm-image]: https://img.shields.io/npm/v/mocha-pipelines.svg?style=flat
 [npm-url]: https://npmjs.org/package/mocha-pipelines
 
-*(mocha logo here with pipelines running through it)*
-
 Parallelize your [mocha](https://github.com/mochajs/mocha) tests across
 multiple virtual machines (pipelines) and/or processes to decrease the runtime
 of your tests.
