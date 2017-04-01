@@ -18,9 +18,10 @@
   "keywords": [
     "mocha parallel",
     "parallel mocha",
+    "parallel tests",
     "mocha",
     "parallel",
-    "parallelize",
+    "tests",
     "pipelines"
   ],
   "author": "Sean Lavine <lavis88@gmail.com>",
